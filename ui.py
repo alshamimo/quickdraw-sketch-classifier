@@ -7,12 +7,12 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-# Projekt-Imports
+# Project imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from src.models import QuickDrawNN, QuickDrawCNN
 import config
 
-# ── Konstanten ────────────────────────────────────────────────────────────────
+# ── Constants ─────────────────────────────────────────────────────────────────
 CLASSES     = config.CLASSES
 CANVAS_SIZE = 580
 BAR_HEIGHT  = 30
@@ -28,20 +28,20 @@ COLORS = {
 }
 
 HINTS = {
-    "apple":      "Kreis mit Stiel oben",
-    "candle":     "Rechteck + Flamme oben",
-    "eyeglasses": "Zwei Kreise verbunden",
-    "fork":       "3-4 Zinken + langer Griff",
-    "star":       "5 Zacken von der Mitte",
+    "apple":      "Circle with a stem on top",
+    "candle":     "Rectangle with a flame on top",
+    "eyeglasses": "Two circles connected",
+    "fork":       "3-4 tines with a long handle",
+    "star":       "5 points from the center",
 }
 
 BG    = "#111111"
 PANEL = "#1c1c1c"
 FG    = "#eeeeee"
 
-# ── Modelle direkt laden ──────────────────────────────────────────────────────
+# ── Load models ───────────────────────────────────────────────────────────────
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Lade Modelle auf: {DEVICE}")
+print(f"Loading models on: {DEVICE}")
 
 def load_model(model_class, path):
     model = model_class().to(DEVICE)
@@ -51,18 +51,18 @@ def load_model(model_class, path):
 
 nn_model  = load_model(QuickDrawNN,  "train_results/nn_model.pth")
 cnn_model = load_model(QuickDrawCNN, "train_results/cnn_model.pth")
-print("Modelle geladen.")
+print("Models loaded.")
 
 # ── Preprocessing ─────────────────────────────────────────────────────────────
 def preprocess(pil_image: Image.Image) -> torch.Tensor:
     image = pil_image.convert("L")
 
-    # Schwellenwert: dunkle Pixel → reines Schwarz
+    # Threshold: dark pixels → pure black
     arr = np.array(image)
     arr[arr < 30] = 0
     image = Image.fromarray(arr)
 
-    # Bounding Box + zentrieren
+    # Bounding box + center
     bbox = image.getbbox()
     if bbox:
         image = image.crop(bbox)
@@ -78,7 +78,7 @@ def preprocess(pil_image: Image.Image) -> torch.Tensor:
     arr   = np.array(image).astype("float32") / 255.0
     return torch.tensor(arr).unsqueeze(0).unsqueeze(0).to(DEVICE)
 
-# ── Vorhersage ────────────────────────────────────────────────────────────────
+# ── Prediction ────────────────────────────────────────────────────────────────
 def predict(model, tensor) -> dict:
     with torch.no_grad():
         probs = F.softmax(model(tensor), dim=1).cpu().numpy()[0]
@@ -113,10 +113,10 @@ class QuickDrawApp:
         header.pack(fill="x", padx=24, pady=(18, 0))
         tk.Label(header, text="AI Drawing Recognition",
                  bg=BG, fg=FG, font=("Segoe UI", 20, "bold")).pack(anchor="w")
-        tk.Label(header, text="CNN vs. NN — zeichne eines der 5 Objekte",
+        tk.Label(header, text="CNN vs. NN — draw one of the 5 objects",
                  bg=BG, fg="#555", font=("Segoe UI", 11)).pack(anchor="w", pady=(2, 10))
 
-        # Legende
+        # Legend
         legend = tk.Frame(self.root, bg=BG)
         legend.pack(fill="x", padx=24)
         for cls in CLASSES:
@@ -128,22 +128,22 @@ class QuickDrawApp:
                            font=("Segoe UI", 11), cursor="hand2")
             lbl.pack(side="left", padx=(2, 0))
             lbl.bind("<Enter>", lambda e, c=cls: self.hint_var.set(
-                f"Tipp  {c.capitalize()}: {HINTS[c]}"))
+                f"Tip  {c.capitalize()}: {HINTS[c]}"))
             lbl.bind("<Leave>", lambda e: self.hint_var.set(
-                "← Hover über eine Klasse für Zeichentipps"))
+                "← Hover over a class for drawing tips"))
 
         # Hint Box
-        self.hint_var = tk.StringVar(value="← Hover über eine Klasse für Zeichentipps")
+        self.hint_var = tk.StringVar(value="← Hover over a class for drawing tips")
         tk.Label(self.root, textvariable=self.hint_var,
                  bg="#181818", fg="#555", font=("Segoe UI", 10),
                  anchor="w", padx=14, pady=7
                  ).pack(fill="x", padx=24, pady=(8, 10))
 
-        # Hauptbereich
+        # Main area
         main = tk.Frame(self.root, bg=BG)
         main.pack(fill="both", expand=True, padx=24, pady=(0, 20))
 
-        # Linke Spalte: Canvas
+        # Left column: Canvas
         left = tk.Frame(main, bg=BG)
         left.pack(side="left", anchor="n")
 
@@ -173,7 +173,7 @@ class QuickDrawApp:
                   command=self._clear
                   ).pack(side="left", fill="x", expand=True, ipady=12)
 
-        # Rechte Spalte: Ergebnisse
+        # Right column: Results
         right = tk.Frame(main, bg=BG, width=PANEL_W)
         right.pack(side="left", anchor="n", padx=(28, 0), fill="both", expand=True)
         right.pack_propagate(False)
@@ -185,7 +185,7 @@ class QuickDrawApp:
         tk.Frame(right, bg="#2a2a2a", height=2).pack(fill="x", pady=14)
         self.nn_panel  = self._build_panel(right, "NN",  "#339af0")
 
-        self.status_var = tk.StringVar(value="Zeichne etwas und drücke Recognize.")
+        self.status_var = tk.StringVar(value="Draw something and press Recognize.")
         tk.Label(right, textvariable=self.status_var,
                  bg=BG, fg="#555", font=("Segoe UI", 10),
                  wraplength=PANEL_W - 20, justify="left", anchor="w"
@@ -222,7 +222,7 @@ class QuickDrawApp:
 
         return {"bars": bars, "top_lbl": top_lbl, "accent": accent}
 
-    # ── Zeichnen ──────────────────────────────────────────────────────────────
+    # ── Drawing ───────────────────────────────────────────────────────────────
     def _start_draw(self, e):
         self.last_x, self.last_y = e.x, e.y
 
@@ -248,11 +248,11 @@ class QuickDrawApp:
         self.pil_draw  = ImageDraw.Draw(self.pil_image)
         self._reset_panel(self.cnn_panel)
         self._reset_panel(self.nn_panel)
-        self.status_var.set("Zeichne etwas und drücke Recognize.")
+        self.status_var.set("Draw something and press Recognize.")
 
-    # ── Predict direkt ────────────────────────────────────────────────────────
+    # ── Predict ───────────────────────────────────────────────────────────────
     def _recognize(self):
-        self.status_var.set("Analysiere…")
+        self.status_var.set("Analyzing…")
         self.root.update()
 
         try:
@@ -268,15 +268,15 @@ class QuickDrawApp:
 
             if cnn_top != nn_top:
                 self.status_var.set(
-                    f"⚡ Modelle uneinig:\n"
+                    f"⚡ Models disagree:\n"
                     f"CNN → {cnn_top}    NN → {nn_top}\n"
-                    f"CNN erkennt lokale Muster, NN globale Pixelverteilung."
+                    f"CNN detects local patterns, NN global pixel distribution."
                 )
             else:
-                self.status_var.set(f"✓ Beide Modelle einig: {cnn_top.upper()}")
+                self.status_var.set(f"✓ Both models agree: {cnn_top.upper()}")
 
         except Exception as ex:
-            self.status_var.set(f"Fehler: {ex}")
+            self.status_var.set(f"Error: {ex}")
 
     def _update_panel(self, panel, predictions):
         top_cls  = max(predictions, key=predictions.get)

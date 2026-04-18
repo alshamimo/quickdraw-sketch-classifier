@@ -1,7 +1,11 @@
 # QuickDraw Sketch Classifier — CNN vs. NN
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C.svg)
 
 > A deep learning system that classifies hand-drawn sketches in real time,
 > comparing a  Fully Connected Neural Network (NN) with a Convolutional Neural Network (CNN) on the [Google QuickDraw](https://github.com/googlecreativelab/quickdraw-dataset) dataset.
+
+![Demo](assets/demo.gif)
 
 🎯 **Live Prediction Demo:**
 - Draw a sketch → model predicts instantly

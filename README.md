@@ -1,26 +1,27 @@
 # Sketch Classifier — CNN vs. NN
+
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C.svg)
 
 > A deep learning system that classifies hand-drawn sketches in real time,
-> comparing a  Fully Connected Neural Network (NN) with a Convolutional Neural Network (CNN) on the [Google QuickDraw](https://github.com/googlecreativelab/quickdraw-dataset) dataset.
+> comparing a Fully Connected Neural Network (NN) with a Convolutional Neural Network (CNN)
+> on the [Google QuickDraw](https://github.com/googlecreativelab/quickdraw-dataset) dataset.
 
 ![Demo](assets/demo.gif)
 
-🎯 **Live Prediction Demo:**
+**Live Prediction Demo:**
 - Draw a sketch → model predicts instantly
-- Both models are loaded simultaneously for instant switching 
+- Both models loaded simultaneously for instant switching
 - Compare predictions in real time
-
 
 ---
 
 ## Results
 
 | Model | Test Accuracy | Parameters |
-|-------|--------------|------------|
-| NN    | 93.4%        | ~109k      |
-| **CNN**   | **96.2%**    | **~56k**   |
+|-------|:------------:|:----------:|
+| NN | 93.4% | ~109k |
+| **CNN** | **96.2%** | **~56k** |
 
 CNN achieves **+2.8% higher accuracy** using **50% fewer parameters** — demonstrating the advantage of spatial feature learning for image data.
 
@@ -28,26 +29,23 @@ CNN achieves **+2.8% higher accuracy** using **50% fewer parameters** — demons
 
 ## Visualizations
 
-### Accuracy Comparison
-![Accuracy Comparison](assets/accuracy_comparison.png)
+| Accuracy Comparison | Training Curves |
+|---|---|
+| ![Accuracy Comparison](assets/accuracy_comparison.png) | ![Training Curves](assets/training_curves.png) |
 
-### Training Curves — Loss & Accuracy
-![Training Curves](assets/training_curves.png)
+| Confusion Matrix — CNN | Confusion Matrix — NN |
+|---|---|
+| ![Confusion Matrix CNN](assets/confusion_matrix_cnn.png) | ![Confusion Matrix NN](assets/confusion_matrix_nn.png) |
 
-### Confusion Matrix — CNN
-![Confusion Matrix CNN](assets/confusion_matrix_cnn.png)
-
-### Confusion Matrix — NN
-![Confusion Matrix NN](assets/confusion_matrix_nn.png)
-
-### Failure Analysis — Where NN fails, CNN succeeds
+**Failure Analysis — Where NN fails, CNN succeeds**
 ![Failure Analysis](assets/failure_analysis.png)
 
 ---
 
 ## Classes
+
 | Label | Class |
-|-------|-------|
+|:-----:|-------|
 | 0 | 🍎 Apple |
 | 1 | ⭐ Star |
 | 2 | 🍴 Fork |
